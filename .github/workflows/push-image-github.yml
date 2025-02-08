@@ -2,6 +2,8 @@ name: Publish Docker image to GitHub
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
   release:
     types: [published]
 
@@ -27,14 +29,13 @@ jobs:
           images: |
             ghcr.io/${{ github.repository }}
           tags: |
-            type=raw,value=latest
+            type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
             type=ref,event=tag
             type=ref,event=branch
-          # 自动处理分支名中的特殊字符（如 / 转换为 -）
           flavor: |
             latest=false
             prefix=
-            suffix={{.Ref_slug}}
+            suffix=${{ "{{.RefSlug}}" }}  # 修正后的模板语法
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -48,7 +49,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.meta.outputs.tags }}  # 使用自动生成的标签
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
