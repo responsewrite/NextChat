@@ -16,19 +16,25 @@ jobs:
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
         with:
-          registry: ghcr.io  # 指定GHCR
-          username: ${{ github.actor }}  # 使用 GitHub 用户名
-          password: ${{ secrets.GITHUB_TOKEN }}  # 使用 GitHub 的自动生成 token 进行身份验证
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/${{ github.repository }}  # 使用 GitHub Container Registry
+          images: |
+            ghcr.io/${{ github.repository }}
           tags: |
             type=raw,value=latest
             type=ref,event=tag
-            type=branch,value=${{ github.ref_name }}  # 使用当前分支名称作为标签
+            type=ref,event=branch
+          # 自动处理分支名中的特殊字符（如 / 转换为 -）
+          flavor: |
+            latest=false
+            prefix=
+            suffix={{.Ref_slug}}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -42,8 +48,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            ghcr.io/${{ github.repository }}-${{ github.ref_name }}:latest  # 使用分支名来确保唯一的镜像标签
+          tags: ${{ steps.meta.outputs.tags }}  # 使用自动生成的标签
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
