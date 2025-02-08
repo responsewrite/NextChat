@@ -68,7 +68,7 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
       LlmIcon = BotIconMeta;
     } else if (modelName.startsWith("mixtral")) {
       LlmIcon = BotIconMistral;
-    } else if (modelName.startsWith("deepseek")) {
+    } else if (modelName.startsWith("deepseek")||(modelName.startsWith("Pro")) {
       LlmIcon = BotIconDeepseek;
     } else if (modelName.startsWith("moonshot")) {
       LlmIcon = BotIconMoonshot;
