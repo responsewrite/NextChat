@@ -35,7 +35,7 @@ jobs:
           flavor: |
             latest=false
             prefix=
-            suffix=${{ "{{.RefSlug}}" }}  # 修正后的模板语法
+            suffix={{.RefSlug}} 
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
