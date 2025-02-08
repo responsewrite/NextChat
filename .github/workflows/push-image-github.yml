@@ -32,10 +32,6 @@ jobs:
             type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
             type=ref,event=tag
             type=ref,event=branch
-          flavor: |
-            latest=false
-            prefix=
-            suffix={{.RefSlug}} 
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
